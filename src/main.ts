@@ -1,29 +1,42 @@
 import "~/src/style.css"
 
-import viteLogo from "/vite.svg"
-import {setupCounter} from "~/src/counter"
-import typescriptLogo from "~/src/typescript.svg"
+import {Cloudinary} from "@cloudinary/url-gen"
+import {source} from "@cloudinary/url-gen/actions/overlay"
+import {scale} from "@cloudinary/url-gen/actions/resize"
+import {text} from "@cloudinary/url-gen/qualifiers/source"
+import {TextStyle} from "@cloudinary/url-gen/qualifiers/textStyle"
+
+const cloudinary = new Cloudinary({
+    cloud: {
+        cloudName: "bradgarropy",
+    },
+})
+
+const code = cloudinary
+    .image("cloudinary-custom-font-demo/stars")
+    .quality("auto")
+    .format("auto")
+    .resize(scale().width(600))
+    .overlay(
+        source(
+            text(
+                `
+                  square bois []
+                   round bois ()
+                   curly bois {}
+                  pointy bois <>
+                `,
+                new TextStyle(
+                    "cloudinary-custom-font-demo:CascadiaCode.woff2",
+                    36,
+                ).fontWeight("bold"),
+            ).textColor("white"),
+        ),
+    )
+    .toURL()
 
 document.querySelector<HTMLDivElement>("#app")!.innerHTML = `
   <div>
-    <a href="https://vitejs.dev" target="_blank">
-      <img src="${viteLogo}" class="logo" alt="Vite logo" />
-    </a>
-
-    <a href="https://www.typescriptlang.org/" target="_blank">
-      <img src="${typescriptLogo}" class="logo vanilla" alt="TypeScript logo" />
-    </a>
-
-    <h1>Vite + TypeScript</h1>
-
-    <div class="card">
-      <button id="counter" type="button"></button>
-    </div>
-
-    <p class="read-the-docs">
-      Click on the Vite and TypeScript logos to learn more
-    </p>
+    <img src="${code}" />
   </div>
 `
-
-setupCounter(document.querySelector<HTMLButtonElement>("#counter")!)
